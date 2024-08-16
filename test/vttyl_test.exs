@@ -251,6 +251,32 @@ defmodule VttylTest do
       assert Enum.filter(parsed, &match?(%Header{}, &1)) |> Enum.count() == 2
       assert Enum.filter(parsed, &match?(%Part{}, &1)) |> Enum.count() == 3
     end
+
+    test "handles multiple lines" do
+      vtt = """
+        WEBVTT
+
+        1
+        00:00:04.047 --> 00:00:09.135
+        first
+
+        2
+        00:00:10.010 --> 00:00:10.638
+        line 1
+        line 2
+
+        3
+        00:00:12.722 --> 00:00:13.473
+        last
+      """
+
+      parsed =
+        vtt
+        |> Vttyl.parse()
+        |> Enum.into([])
+
+      assert Enum.at(parsed, 1) |> Map.get(:text) == "line 1\nline 2"
+    end
   end
 
   describe "parse_stream/1" do
