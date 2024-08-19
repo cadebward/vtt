@@ -36,8 +36,7 @@ defmodule Vttyl.MixProject do
       maintainers: ["Cade Ward"],
       licenses: ["MIT"],
       links: %{
-        "GitHub" => @repo_url,
-        "Made by Grain" => "https://grain.co"
+        "GitHub" => @repo_url
       }
     ]
   end
