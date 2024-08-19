@@ -44,8 +44,7 @@ defmodule Vttyl.MixProject do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.20", only: :dev},
-      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev, :test], runtime: false}
+      {:ex_doc, "~> 0.34", only: :dev}
     ]
   end
 end
