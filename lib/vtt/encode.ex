@@ -1,10 +1,10 @@
 defmodule Vtt.Encode do
   @moduledoc false
-  alias Vtt.Part
+  alias Vtt.Cue
   alias Vtt.Header
 
-  @spec encode_part(Header.t()) :: String.t()
-  def encode_part(%Header{} = header) do
+  @spec encode(Header.t()) :: String.t()
+  def encode(%Header{} = header) do
     header.values
     |> Enum.map(fn {key, value} ->
       "#{key}:#{value}"
@@ -12,21 +12,21 @@ defmodule Vtt.Encode do
     |> Enum.join(",")
   end
 
-  @spec encode_part(Part.t(), :vtt | :srt, map()) :: String.t()
-  def encode_part(%Part{} = part, type, opts \\ %{}) do
+  @spec encode(Cue.t(), :vtt | :srt, map()) :: String.t()
+  def encode(%Cue{} = cue, type, opts \\ %{}) do
     ts =
-      fmt_timestamp(part.start, type) <>
-        " --> " <> fmt_timestamp(part.end, type) <> fmt_settings(part.settings)
+      fmt_timestamp(cue.start, type) <>
+        " --> " <> fmt_timestamp(cue.end, type) <> fmt_settings(cue.settings)
 
     text =
-      if type == :vtt && part.voice do
-        "<v #{part.voice}>" <> part.text
+      if type == :vtt && cue.voice do
+        "<v #{cue.voice}>" <> cue.text
       else
-        part.text
+        cue.text
       end
 
     if opts.use_cue_identifiers do
-      Enum.join([part.part, ts, text], "\n")
+      Enum.join([cue.part, ts, text], "\n")
     else
       Enum.join([ts, text], "\n")
     end

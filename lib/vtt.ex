@@ -5,7 +5,14 @@ defmodule Vtt do
 
   alias Vtt.Encode
   alias Vtt.Decode
-  alias Vtt.Vtt
+
+  @type t :: %__MODULE__{
+          use_cue_identifiers: boolean(),
+          headers: [Vtt.Header.t()],
+          cues: [Vtt.Cue.t()]
+        }
+
+  defstruct use_cue_identifiers: true, headers: [], cues: []
 
   @doc """
   Parse a string.
@@ -26,14 +33,14 @@ defmodule Vtt do
   Encodes a list of parts into a vtt file.
   """
   @doc since: "0.1.0"
-  @spec encode([Vtt.t()]) :: String.t()
+  @spec encode([t()]) :: String.t()
   def encode(%Vtt{headers: headers, cues: cues} = vtt) do
     opts =
       [use_cue_identifiers: vtt.use_cue_identifiers]
       |> Enum.into(%{})
 
-    headers = Enum.join(["WEBVTT" | Enum.map(headers, &Encode.encode_part/1)], "\n")
-    cues = Enum.join(Enum.map(cues, &Encode.encode_part(&1, :vtt, opts)), "\n\n")
+    headers = Enum.join(["WEBVTT" | Enum.map(headers, &Encode.encode/1)], "\n")
+    cues = Enum.join(Enum.map(cues, &Encode.encode(&1, :vtt, opts)), "\n\n")
 
     Enum.join([headers, cues], "\n\n") <> "\n"
   end

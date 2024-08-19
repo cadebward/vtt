@@ -5,8 +5,8 @@ defmodule VttTest do
 
   doctest Vtt
 
+  alias Vtt.Cue
   alias Vtt.Header
-  alias Vtt.Vtt
 
   test "parses a basic vtt" do
     vtt = """
@@ -29,7 +29,7 @@ defmodule VttTest do
     assert Enum.count(cues) == 3
 
     assert cues == [
-             %Vtt.Part{
+             %Cue{
                start: 4047,
                end: 9135,
                text: "line 1",
@@ -37,7 +37,7 @@ defmodule VttTest do
                voice: nil,
                settings: []
              },
-             %Vtt.Part{
+             %Cue{
                start: 10010,
                end: 10638,
                text: "line 2",
@@ -45,7 +45,7 @@ defmodule VttTest do
                voice: nil,
                settings: []
              },
-             %Vtt.Part{
+             %Cue{
                start: 12722,
                end: 13473,
                text: "line 3",
@@ -61,7 +61,7 @@ defmodule VttTest do
       %Vtt{
         headers: [],
         cues: [
-          %Vtt.Part{
+          %Cue{
             start: 4047,
             end: 9135,
             text: "line 1",
@@ -69,7 +69,7 @@ defmodule VttTest do
             voice: nil,
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 10010,
             end: 10638,
             text: "line 2",
@@ -77,7 +77,7 @@ defmodule VttTest do
             voice: nil,
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 12722,
             end: 13473,
             text: "line 3",
@@ -137,14 +137,14 @@ defmodule VttTest do
 
   test "encodes vtt with headers" do
     encoded =
-      %Vtt.Vtt{
+      %Vtt{
         headers: [
           %Vtt.Header{
             values: [{"X-TIMESTAMP-MAP=LOCAL", "00:00:00.000"}, {"MPEGTS", "900000"}]
           }
         ],
         cues: [
-          %Vtt.Part{
+          %Cue{
             start: 4047,
             end: 9135,
             text: "line 1",
@@ -152,7 +152,7 @@ defmodule VttTest do
             voice: nil,
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 10010,
             end: 10638,
             text: "line 2",
@@ -160,7 +160,7 @@ defmodule VttTest do
             voice: nil,
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 12722,
             end: 13473,
             text: "line 3",
@@ -210,7 +210,7 @@ defmodule VttTest do
     assert Enum.count(cues) == 3
 
     assert cues == [
-             %Vtt.Part{
+             %Cue{
                start: 4047,
                end: 9135,
                text: "line 1",
@@ -218,7 +218,7 @@ defmodule VttTest do
                voice: nil,
                settings: []
              },
-             %Vtt.Part{
+             %Cue{
                start: 10010,
                end: 10638,
                text: "line 2",
@@ -226,7 +226,7 @@ defmodule VttTest do
                voice: nil,
                settings: []
              },
-             %Vtt.Part{
+             %Cue{
                start: 12722,
                end: 13473,
                text: "line 3",
@@ -239,11 +239,11 @@ defmodule VttTest do
 
   test "encodes missing cue numbers" do
     encoded =
-      %Vtt.Vtt{
+      %Vtt{
         use_cue_identifiers: false,
         headers: [],
         cues: [
-          %Vtt.Part{
+          %Cue{
             start: 4047,
             end: 9135,
             text: "line 1",
@@ -251,7 +251,7 @@ defmodule VttTest do
             voice: nil,
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 10010,
             end: 10638,
             text: "line 2",
@@ -259,7 +259,7 @@ defmodule VttTest do
             voice: nil,
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 12722,
             end: 13473,
             text: "line 3",
@@ -306,7 +306,7 @@ defmodule VttTest do
     assert Enum.count(cues) == 3
 
     assert cues == [
-             %Vtt.Part{
+             %Cue{
                start: 4047,
                end: 9135,
                text: "line 1",
@@ -319,7 +319,7 @@ defmodule VttTest do
                  {"size", "40%"}
                ]
              },
-             %Vtt.Part{
+             %Cue{
                start: 10010,
                end: 10638,
                text: "line 2",
@@ -327,7 +327,7 @@ defmodule VttTest do
                voice: nil,
                settings: [{"align", "center"}]
              },
-             %Vtt.Part{
+             %Cue{
                start: 12722,
                end: 13473,
                text: "line 3",
@@ -340,11 +340,11 @@ defmodule VttTest do
 
   test "encodes cue settings" do
     encoded =
-      %Vtt.Vtt{
+      %Vtt{
         use_cue_identifiers: false,
         headers: [],
         cues: [
-          %Vtt.Part{
+          %Cue{
             start: 4047,
             end: 9135,
             text: "line 1",
@@ -357,7 +357,7 @@ defmodule VttTest do
               {"size", "40%"}
             ]
           },
-          %Vtt.Part{
+          %Cue{
             start: 10010,
             end: 10638,
             text: "line 2",
@@ -365,7 +365,7 @@ defmodule VttTest do
             voice: nil,
             settings: [{"align", "center"}]
           },
-          %Vtt.Part{
+          %Cue{
             start: 12722,
             end: 13473,
             text: "line 3",
@@ -418,7 +418,7 @@ defmodule VttTest do
     assert Enum.count(cues) == 4
 
     assert cues == [
-             %Vtt.Part{
+             %Cue{
                start: 0,
                end: 2000,
                text: "It’s a blue apple tree!",
@@ -426,7 +426,7 @@ defmodule VttTest do
                voice: "Esme",
                settings: []
              },
-             %Vtt.Part{
+             %Cue{
                start: 2000,
                end: 4000,
                text: "No way!",
@@ -434,7 +434,7 @@ defmodule VttTest do
                voice: "Mary",
                settings: []
              },
-             %Vtt.Part{
+             %Cue{
                start: 4000,
                end: 6000,
                text: "Hee!",
@@ -442,7 +442,7 @@ defmodule VttTest do
                voice: "Esme F",
                settings: []
              },
-             %Vtt.Part{
+             %Cue{
                start: 6000,
                end: 8000,
                text: "That’s awesome!",
@@ -456,11 +456,11 @@ defmodule VttTest do
   @tag :skip
   test "encodes voice" do
     encoded =
-      %Vtt.Vtt{
+      %Vtt{
         use_cue_identifiers: true,
         headers: [],
         cues: [
-          %Vtt.Part{
+          %Cue{
             start: 0,
             end: 2000,
             text: "It’s a blue apple tree!",
@@ -468,7 +468,7 @@ defmodule VttTest do
             voice: "Esme",
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 2000,
             end: 4000,
             text: "No way!",
@@ -476,7 +476,7 @@ defmodule VttTest do
             voice: "Mary",
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 4000,
             end: 6000,
             text: "Hee!",
@@ -484,7 +484,7 @@ defmodule VttTest do
             voice: "Esme F",
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 6000,
             end: 8000,
             text: "That’s awesome!",
@@ -548,11 +548,11 @@ defmodule VttTest do
 
   test "encoded multiple lines" do
     encoded =
-      %Vtt.Vtt{
+      %Vtt{
         use_cue_identifiers: true,
         headers: [],
         cues: [
-          %Vtt.Part{
+          %Cue{
             start: 4047,
             end: 9135,
             text: "first",
@@ -560,7 +560,7 @@ defmodule VttTest do
             voice: nil,
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 10010,
             end: 10638,
             text: "line 1\nline 2",
@@ -568,7 +568,7 @@ defmodule VttTest do
             voice: nil,
             settings: []
           },
-          %Vtt.Part{
+          %Cue{
             start: 12722,
             end: 13473,
             text: "line 2.1\nline 2.2\nline 2.3",

@@ -1,7 +1,7 @@
 defmodule Vtt.Decode do
   @moduledoc false
 
-  alias Vtt.Part
+  alias Vtt.Cue
   alias Vtt.Header
 
   @header_regex ~r/^(\S*?:\S*?)(,\S*?:\S*?)*$/
@@ -12,14 +12,14 @@ defmodule Vtt.Decode do
       |> Stream.map(fn line -> Regex.replace(~r/#.*/, line, "") end)
       |> Stream.map(&String.trim/1)
       |> Stream.reject(&(&1 in ["WEBVTT"]))
-      |> Stream.chunk_while(%Part{}, &parse_chunk/2, &parse_chunk_after/1)
+      |> Stream.chunk_while(%Cue{}, &parse_chunk/2, &parse_chunk_after/1)
       |> Stream.filter(&full_chunk?/1)
       |> Enum.to_list()
 
-    cues = Enum.filter(parsed, &match?(%Part{}, &1))
+    cues = Enum.filter(parsed, &match?(%Cue{}, &1))
     use_cue_identifiers? = Enum.all?(cues, &(&1.part > 0))
 
-    %Vtt.Vtt{
+    %Vtt{
       use_cue_identifiers: use_cue_identifiers?,
       headers: Enum.filter(parsed, &match?(%Header{}, &1)),
       cues: cues
@@ -30,7 +30,7 @@ defmodule Vtt.Decode do
     acc =
       cond do
         Regex.match?(~r/^\d+$/, line) ->
-          %Part{acc | part: String.to_integer(line)}
+          %Cue{acc | part: String.to_integer(line)}
 
         is_nil(acc.part) and header?(line) ->
           values =
@@ -45,24 +45,24 @@ defmodule Vtt.Decode do
 
         is_nil(acc.part) and timestamps?(line) ->
           {start_ts, end_ts, settings} = parse_cue_timings(line)
-          %Part{acc | start: start_ts, end: end_ts, part: 0, settings: settings}
+          %Cue{acc | start: start_ts, end: end_ts, part: 0, settings: settings}
 
         not is_nil(acc.part) and timestamps?(line) ->
           {start_ts, end_ts, settings} = parse_cue_timings(line)
 
-          %Part{acc | start: start_ts, end: end_ts, settings: settings}
+          %Cue{acc | start: start_ts, end: end_ts, settings: settings}
 
         # Text content should be on one line and the other stuff should have appeared
         not is_nil(acc.part) and not is_nil(acc.start) and not is_nil(acc.end) and line != "" ->
           {voice, text} = parse_text(line)
-          %Part{acc | text: maybe_append_text(acc.text, text), voice: voice}
+          %Cue{acc | text: maybe_append_text(acc.text, text), voice: voice}
 
         true ->
           acc
       end
 
     if full_chunk?(acc, line) do
-      {:cont, acc, %Part{}}
+      {:cont, acc, %Cue{}}
     else
       {:cont, acc}
     end
@@ -71,15 +71,15 @@ defmodule Vtt.Decode do
   defp maybe_append_text(nil, text), do: text
   defp maybe_append_text(previous_line, text), do: Enum.join([previous_line, text], "\n")
 
-  defp parse_chunk_after(acc), do: {:cont, acc, %Part{}}
+  defp parse_chunk_after(acc), do: {:cont, acc, %Cue{}}
 
   defp full_chunk?(%Header{}), do: true
 
-  defp full_chunk?(%Part{part: part, start: start, end: ts_end, text: text}) do
+  defp full_chunk?(%Cue{part: part, start: start, end: ts_end, text: text}) do
     not is_nil(part) and not is_nil(start) and not is_nil(ts_end) and not is_nil(text)
   end
 
-  defp full_chunk?(%Part{part: part, start: start, end: ts_end, text: text}, line) do
+  defp full_chunk?(%Cue{part: part, start: start, end: ts_end, text: text}, line) do
     not is_nil(part) and not is_nil(start) and not is_nil(ts_end) and not is_nil(text) and
       line == ""
   end

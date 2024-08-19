@@ -1,4 +1,4 @@
-defmodule Vtt.Part do
+defmodule Vtt.Cue do
   @type t :: %__MODULE__{
           part: non_neg_integer(),
           start: millisecond :: integer,
