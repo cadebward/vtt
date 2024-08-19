@@ -1,11 +1,11 @@
-defmodule Vttyl do
+defmodule Vtt do
   @moduledoc """
   Encoding and decoding VTT files
   """
 
-  alias Vttyl.Encode
-  alias Vttyl.Decode
-  alias Vttyl.Vtt
+  alias Vtt.Encode
+  alias Vtt.Decode
+  alias Vtt.Vtt
 
   @doc """
   Parse a string.

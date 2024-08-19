@@ -1,4 +1,4 @@
-defmodule Vttyl.Header do
+defmodule Vtt.Header do
   @type t :: %__MODULE__{
           values: [{String.t(), String.t()}]
         }

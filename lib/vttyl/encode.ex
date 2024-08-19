@@ -1,7 +1,7 @@
-defmodule Vttyl.Encode do
+defmodule Vtt.Encode do
   @moduledoc false
-  alias Vttyl.Part
-  alias Vttyl.Header
+  alias Vtt.Part
+  alias Vtt.Header
 
   @spec encode_part(Header.t()) :: String.t()
   def encode_part(%Header{} = header) do

@@ -1,4 +1,4 @@
-defmodule Vttyl.Part do
+defmodule Vtt.Part do
   @type t :: %__MODULE__{
           part: non_neg_integer(),
           start: millisecond :: integer,

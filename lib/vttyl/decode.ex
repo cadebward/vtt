@@ -1,8 +1,8 @@
-defmodule Vttyl.Decode do
+defmodule Vtt.Decode do
   @moduledoc false
 
-  alias Vttyl.Part
-  alias Vttyl.Header
+  alias Vtt.Part
+  alias Vtt.Header
 
   @header_regex ~r/^(\S*?:\S*?)(,\S*?:\S*?)*$/
 
@@ -19,7 +19,7 @@ defmodule Vttyl.Decode do
     cues = Enum.filter(parsed, &match?(%Part{}, &1))
     use_cue_identifiers? = Enum.all?(cues, &(&1.part > 0))
 
-    %Vttyl.Vtt{
+    %Vtt.Vtt{
       use_cue_identifiers: use_cue_identifiers?,
       headers: Enum.filter(parsed, &match?(%Header{}, &1)),
       cues: cues

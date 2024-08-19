@@ -1,8 +1,8 @@
 defmodule Vttyl.MixProject do
   use Mix.Project
 
-  @version "0.5.0"
-  @repo_url "https://github.com/grain-team/vttyl"
+  @version "0.1.0"
+  @repo_url "https://github.com/cadebward/vtt"
 
   def project do
     [

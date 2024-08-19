@@ -1,12 +1,12 @@
-defmodule VttylTest do
+defmodule VttTest do
   @moduledoc false
 
   use ExUnit.Case, async: true
 
-  doctest Vttyl
+  doctest Vtt
 
-  alias Vttyl.Header
-  alias Vttyl.Vtt
+  alias Vtt.Header
+  alias Vtt.Vtt
 
   test "parses a basic vtt" do
     vtt = """
@@ -25,11 +25,11 @@ defmodule VttylTest do
     line 3
     """
 
-    %Vtt{headers: [], cues: cues} = Vttyl.parse(vtt)
+    %Vtt{headers: [], cues: cues} = Vtt.parse(vtt)
     assert Enum.count(cues) == 3
 
     assert cues == [
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 4047,
                end: 9135,
                text: "line 1",
@@ -37,7 +37,7 @@ defmodule VttylTest do
                voice: nil,
                settings: []
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 10010,
                end: 10638,
                text: "line 2",
@@ -45,7 +45,7 @@ defmodule VttylTest do
                voice: nil,
                settings: []
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 12722,
                end: 13473,
                text: "line 3",
@@ -61,7 +61,7 @@ defmodule VttylTest do
       %Vtt{
         headers: [],
         cues: [
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 4047,
             end: 9135,
             text: "line 1",
@@ -69,7 +69,7 @@ defmodule VttylTest do
             voice: nil,
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 10010,
             end: 10638,
             text: "line 2",
@@ -77,7 +77,7 @@ defmodule VttylTest do
             voice: nil,
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 12722,
             end: 13473,
             text: "line 3",
@@ -87,7 +87,7 @@ defmodule VttylTest do
           }
         ]
       }
-      |> Vttyl.encode()
+      |> Vtt.encode()
 
     expected = """
     WEBVTT
@@ -126,7 +126,7 @@ defmodule VttylTest do
     line 3
     """
 
-    %Vtt{headers: headers, cues: cues} = Vttyl.parse(vtt)
+    %Vtt{headers: headers, cues: cues} = Vtt.parse(vtt)
     assert Enum.count(cues) == 3
     assert Enum.count(headers) == 1
 
@@ -137,14 +137,14 @@ defmodule VttylTest do
 
   test "encodes vtt with headers" do
     encoded =
-      %Vttyl.Vtt{
+      %Vtt.Vtt{
         headers: [
-          %Vttyl.Header{
+          %Vtt.Header{
             values: [{"X-TIMESTAMP-MAP=LOCAL", "00:00:00.000"}, {"MPEGTS", "900000"}]
           }
         ],
         cues: [
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 4047,
             end: 9135,
             text: "line 1",
@@ -152,7 +152,7 @@ defmodule VttylTest do
             voice: nil,
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 10010,
             end: 10638,
             text: "line 2",
@@ -160,7 +160,7 @@ defmodule VttylTest do
             voice: nil,
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 12722,
             end: 13473,
             text: "line 3",
@@ -170,7 +170,7 @@ defmodule VttylTest do
           }
         ]
       }
-      |> Vttyl.encode()
+      |> Vtt.encode()
 
     expected = """
     WEBVTT
@@ -206,11 +206,11 @@ defmodule VttylTest do
     line 3
     """
 
-    %Vtt{headers: [], cues: cues, use_cue_identifiers: false} = Vttyl.parse(vtt)
+    %Vtt{headers: [], cues: cues, use_cue_identifiers: false} = Vtt.parse(vtt)
     assert Enum.count(cues) == 3
 
     assert cues == [
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 4047,
                end: 9135,
                text: "line 1",
@@ -218,7 +218,7 @@ defmodule VttylTest do
                voice: nil,
                settings: []
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 10010,
                end: 10638,
                text: "line 2",
@@ -226,7 +226,7 @@ defmodule VttylTest do
                voice: nil,
                settings: []
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 12722,
                end: 13473,
                text: "line 3",
@@ -239,11 +239,11 @@ defmodule VttylTest do
 
   test "encodes missing cue numbers" do
     encoded =
-      %Vttyl.Vtt{
+      %Vtt.Vtt{
         use_cue_identifiers: false,
         headers: [],
         cues: [
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 4047,
             end: 9135,
             text: "line 1",
@@ -251,7 +251,7 @@ defmodule VttylTest do
             voice: nil,
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 10010,
             end: 10638,
             text: "line 2",
@@ -259,7 +259,7 @@ defmodule VttylTest do
             voice: nil,
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 12722,
             end: 13473,
             text: "line 3",
@@ -269,7 +269,7 @@ defmodule VttylTest do
           }
         ]
       }
-      |> Vttyl.encode()
+      |> Vtt.encode()
 
     expected = """
     WEBVTT
@@ -301,12 +301,12 @@ defmodule VttylTest do
     line 3
     """
 
-    %Vtt{headers: [], cues: cues} = Vttyl.parse(vtt)
+    %Vtt{headers: [], cues: cues} = Vtt.parse(vtt)
 
     assert Enum.count(cues) == 3
 
     assert cues == [
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 4047,
                end: 9135,
                text: "line 1",
@@ -319,7 +319,7 @@ defmodule VttylTest do
                  {"size", "40%"}
                ]
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 10010,
                end: 10638,
                text: "line 2",
@@ -327,7 +327,7 @@ defmodule VttylTest do
                voice: nil,
                settings: [{"align", "center"}]
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 12722,
                end: 13473,
                text: "line 3",
@@ -340,11 +340,11 @@ defmodule VttylTest do
 
   test "encodes cue settings" do
     encoded =
-      %Vttyl.Vtt{
+      %Vtt.Vtt{
         use_cue_identifiers: false,
         headers: [],
         cues: [
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 4047,
             end: 9135,
             text: "line 1",
@@ -357,7 +357,7 @@ defmodule VttylTest do
               {"size", "40%"}
             ]
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 10010,
             end: 10638,
             text: "line 2",
@@ -365,7 +365,7 @@ defmodule VttylTest do
             voice: nil,
             settings: [{"align", "center"}]
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 12722,
             end: 13473,
             text: "line 3",
@@ -375,7 +375,7 @@ defmodule VttylTest do
           }
         ]
       }
-      |> Vttyl.encode()
+      |> Vtt.encode()
 
     expected = """
     WEBVTT
@@ -414,11 +414,11 @@ defmodule VttylTest do
     <v.loud Mary>That’s awesome!
     """
 
-    %Vtt{headers: [], cues: cues} = Vttyl.parse(vtt)
+    %Vtt{headers: [], cues: cues} = Vtt.parse(vtt)
     assert Enum.count(cues) == 4
 
     assert cues == [
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 0,
                end: 2000,
                text: "It’s a blue apple tree!",
@@ -426,7 +426,7 @@ defmodule VttylTest do
                voice: "Esme",
                settings: []
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 2000,
                end: 4000,
                text: "No way!",
@@ -434,7 +434,7 @@ defmodule VttylTest do
                voice: "Mary",
                settings: []
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 4000,
                end: 6000,
                text: "Hee!",
@@ -442,7 +442,7 @@ defmodule VttylTest do
                voice: "Esme F",
                settings: []
              },
-             %Vttyl.Part{
+             %Vtt.Part{
                start: 6000,
                end: 8000,
                text: "That’s awesome!",
@@ -456,11 +456,11 @@ defmodule VttylTest do
   @tag :skip
   test "encodes voice" do
     encoded =
-      %Vttyl.Vtt{
+      %Vtt.Vtt{
         use_cue_identifiers: true,
         headers: [],
         cues: [
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 0,
             end: 2000,
             text: "It’s a blue apple tree!",
@@ -468,7 +468,7 @@ defmodule VttylTest do
             voice: "Esme",
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 2000,
             end: 4000,
             text: "No way!",
@@ -476,7 +476,7 @@ defmodule VttylTest do
             voice: "Mary",
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 4000,
             end: 6000,
             text: "Hee!",
@@ -484,7 +484,7 @@ defmodule VttylTest do
             voice: "Esme F",
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 6000,
             end: 8000,
             text: "That’s awesome!",
@@ -494,7 +494,7 @@ defmodule VttylTest do
           }
         ]
       }
-      |> Vttyl.encode()
+      |> Vtt.encode()
 
     expected = """
     WEBVTT
@@ -539,7 +539,7 @@ defmodule VttylTest do
     line 2.3
     """
 
-    %Vtt{headers: [], cues: cues} = Vttyl.parse(vtt)
+    %Vtt{headers: [], cues: cues} = Vtt.parse(vtt)
     assert Enum.count(cues) == 3
     assert Enum.at(cues, 0) |> Map.get(:text) == "first"
     assert Enum.at(cues, 1) |> Map.get(:text) == "line 1\nline 2"
@@ -548,11 +548,11 @@ defmodule VttylTest do
 
   test "encoded multiple lines" do
     encoded =
-      %Vttyl.Vtt{
+      %Vtt.Vtt{
         use_cue_identifiers: true,
         headers: [],
         cues: [
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 4047,
             end: 9135,
             text: "first",
@@ -560,7 +560,7 @@ defmodule VttylTest do
             voice: nil,
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 10010,
             end: 10638,
             text: "line 1\nline 2",
@@ -568,7 +568,7 @@ defmodule VttylTest do
             voice: nil,
             settings: []
           },
-          %Vttyl.Part{
+          %Vtt.Part{
             start: 12722,
             end: 13473,
             text: "line 2.1\nline 2.2\nline 2.3",
@@ -578,7 +578,7 @@ defmodule VttylTest do
           }
         ]
       }
-      |> Vttyl.encode()
+      |> Vtt.encode()
 
     expected = """
     WEBVTT
@@ -601,187 +601,4 @@ defmodule VttylTest do
 
     assert encoded == expected
   end
-
-  #   @expected_result [
-  #     %Part{
-  #       end: 17609,
-  #       part: 1,
-  #       start: 15450,
-  #       text: "Hello"
-  #     },
-  #     %Part{
-  #       end: 21240,
-  #       part: 2,
-  #       start: 20700,
-  #       text: "Hi"
-  #     },
-  #     %Part{
-  #       end: 64470,
-  #       part: 3,
-  #       start: 53970,
-  #       text: "My name is Andy."
-  #     },
-  #     %Part{
-  #       end: 76380,
-  #       part: 4,
-  #       start: 68040,
-  #       text: "What a coincidence! Mine is too."
-  #     }
-  #   ]
-  #
-  #   def get_vtt_file(file_name) do
-  #     :vttyl
-  #     |> :code.priv_dir()
-  #     |> Path.join(["samples", "/#{file_name}"])
-  #   end
-  #
-  #   describe "encode_vtt/1" do
-  #     setup tags do
-  #       part = %Part{
-  #         part: Map.get(tags, :part, 1),
-  #         start: Map.get(tags, :start, 1000),
-  #         end: Map.get(tags, :end, 10_000),
-  #         text: Map.get(tags, :text, "Hello world")
-  #       }
-  #
-  #       {:ok, %{parts: [part]}}
-  #     end
-  #
-  #     def make_vtt(part, start_ts, end_ts, text) do
-  #       "WEBVTT\n\n#{part}\n#{start_ts} --> #{end_ts}\n#{text}\n"
-  #     end
-  #
-  #     test "basic", %{parts: parts} do
-  #       assert make_vtt(1, "00:01.000", "00:10.000", "Hello world") == Vttyl.encode_vtt(parts)
-  #     end
-  #
-  #     @tag start: 100_000_000
-  #     @tag end: 100_100_001
-  #     test "large numbers", %{parts: parts} do
-  #       assert make_vtt(1, "27:46:40.000", "27:48:20.001", "Hello world") == Vttyl.encode_vtt(parts)
-  #     end
-  #
-  #     test "encodes settings" do
-  #       parts = [
-  #         %Part{
-  #           part: 1,
-  #           start: 1000,
-  #           end: 10_000,
-  #           text: "Hello world",
-  #           settings: [{"align", "center"}]
-  #         }
-  #       ]
-  #
-  #       assert Vttyl.encode_vtt(parts) ==
-  #                "WEBVTT\n\n1\n00:01.000 --> 00:10.000 align:center\nHello world\n"
-  #     end
-  #
-  #     test "encodes multiple settings" do
-  #       parts = [
-  #         %Part{
-  #           part: 1,
-  #           start: 1000,
-  #           end: 10_000,
-  #           text: "Hello world",
-  #           settings: [{"align", "center"}, {"line", "85%"}, {"position", "50%"}, {"size", "40%"}]
-  #         }
-  #       ]
-  #
-  #       assert Vttyl.encode_vtt(parts) ==
-  #                "WEBVTT\n\n1\n00:01.000 --> 00:10.000 align:center line:85% position:50% size:40%\nHello world\n"
-  #     end
-  #
-  #     test "encodes headers" do
-  #       parts = [
-  #         %Vttyl.Header{
-  #           values: [{"X-TIMESTAMP-MAP=LOCAL", "00:00:00.000"}, {"MPEGTS", "900000"}]
-  #         },
-  #         %Vttyl.Part{
-  #           start: 15450,
-  #           end: 17609,
-  #           text: "Hello",
-  #           part: 1,
-  #           voice: nil,
-  #           settings: []
-  #         },
-  #         %Vttyl.Part{
-  #           start: 20700,
-  #           end: 21240,
-  #           text: "Hi",
-  #           part: 2,
-  #           voice: nil,
-  #           settings: []
-  #         },
-  #         %Vttyl.Part{
-  #           start: 53970,
-  #           end: 64470,
-  #           text: "My name is Andy.",
-  #           part: 3,
-  #           voice: nil,
-  #           settings: []
-  #         },
-  #         %Vttyl.Part{
-  #           start: 68040,
-  #           end: 76380,
-  #           text: "What a coincidence! Mine is too.",
-  #           part: 4,
-  #           voice: nil,
-  #           settings: []
-  #         }
-  #       ]
-  #
-  #       encoded = Vttyl.encode_vtt(parts)
-  #       String.contains?(encoded, "WEBVTT\nX-TIMESTAMP-MAP=LOCAL:00:00:00.000,MPEGTS:900000")
-  #     end
-  #   end
-  #
-  #   describe "encode_srt/1" do
-  #     setup tags do
-  #       part = %Part{
-  #         part: Map.get(tags, :part, 1),
-  #         start: Map.get(tags, :start, 1000),
-  #         end: Map.get(tags, :end, 10_000),
-  #         text: Map.get(tags, :text, "Hello world")
-  #       }
-  #
-  #       {:ok, %{parts: [part]}}
-  #     end
-  #
-  #     def make_srt(part, start_ts, end_ts, text) do
-  #       "#{part}\n#{start_ts} --> #{end_ts}\n#{text}\n"
-  #     end
-  #
-  #     test "basic", %{parts: parts} do
-  #       assert make_srt(1, "00:00:01,000", "00:00:10,000", "Hello world") == Vttyl.encode_srt(parts)
-  #     end
-  #
-  #     test "multi line" do
-  #       parts = [
-  #         %Part{
-  #           part: 1,
-  #           start: 1000,
-  #           end: 10_000,
-  #           text: "Hello"
-  #         },
-  #         %Part{
-  #           part: 2,
-  #           start: 2000,
-  #           end: 20_000,
-  #           text: "world"
-  #         }
-  #       ]
-  #
-  #       expect =
-  #         make_srt(1, "00:00:01,000", "00:00:10,000", "Hello") <>
-  #           "\n" <> make_srt(2, "00:00:02,000", "00:00:20,000", "world")
-  #
-  #       assert expect == Vttyl.encode_srt(parts)
-  #     end
-  #
-  #     @tag start: 100_000_000
-  #     @tag end: 100_100_001
-  #     test "large numbers", %{parts: parts} do
-  #       assert make_srt(1, "27:46:40,000", "27:48:20,001", "Hello world") == Vttyl.encode_srt(parts)
-  #     end
-  #   end
 end
