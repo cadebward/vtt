@@ -3,7 +3,9 @@ defmodule Vttyl do
   Encoding and decoding VTT files
   """
 
-  alias Vttyl.{Encode, Decode, Part}
+  alias Vttyl.Encode
+  alias Vttyl.Decode
+  alias Vttyl.Vtt
 
   @doc """
   Parse a string.
@@ -21,57 +23,18 @@ defmodule Vttyl do
   end
 
   @doc """
-  Parse a stream of utf8 encoded characters.
-
-  This returns a stream so you decide how to handle it!
+  Encodes a list of parts into a vtt file.
   """
   @doc since: "0.1.0"
-  @spec parse_stream(Enumerable.t()) :: Enumerable.t()
-  def parse_stream(content) do
-    content
-    |> Stream.transform("", &next_line/2)
-    |> Decode.parse()
-  end
+  @spec encode([Vtt.t()]) :: String.t()
+  def encode(%Vtt{headers: headers, cues: cues} = vtt) do
+    opts =
+      [use_cue_identifiers: vtt.use_cue_identifiers]
+      |> Enum.into(%{})
 
-  defp next_line(chunk, acc) do
-    case String.split(<<acc::binary, chunk::binary>>, "\n") do
-      [] ->
-        {[], ""}
+    headers = Enum.join(["WEBVTT" | Enum.map(headers, &Encode.encode_part/1)], "\n")
+    cues = Enum.join(Enum.map(cues, &Encode.encode_part(&1, :vtt, opts)), "\n\n")
 
-      lines ->
-        {acc, lines} = List.pop_at(lines, -1)
-        {lines, acc}
-    end
-  end
-
-  @doc """
-  Encodes a list of parts into a vtt file.
-  """
-  @doc since: "0.4.0"
-  @spec encode_vtt([Part.t()]) :: String.t()
-  def encode_vtt(parts) do
-    Enum.join(["WEBVTT" | Enum.map(parts, &Encode.encode_part(&1, :vtt))], "\n\n") <> "\n"
-  end
-
-  @doc """
-  Encodes a list of parts into a srt file.
-  """
-  @doc since: "0.4.0"
-  @spec encode_srt([Part.t()]) :: String.t()
-  def encode_srt(parts) do
-    Enum.map(parts, &Encode.encode_part(&1, :srt))
-    |> Enum.join("\n\n")
-    |> Kernel.<>("\n")
-  end
-
-  @doc """
-  Encodes a list of parts into a vtt file.
-
-  This is currently deprecated use encode_vtt/1 or encode_srt/1 instead
-  """
-  @doc since: "0.3.0"
-  @spec encode([Part.t()]) :: String.t()
-  def encode(parts) do
-    Enum.join(["WEBVTT" | Enum.map(parts, &Encode.encode_part(&1, :vtt))], "\n\n") <> "\n"
+    Enum.join([headers, cues], "\n\n") <> "\n"
   end
 end

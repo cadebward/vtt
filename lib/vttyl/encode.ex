@@ -3,8 +3,8 @@ defmodule Vttyl.Encode do
   alias Vttyl.Part
   alias Vttyl.Header
 
-  @spec encode_part(Header.t() | Part.t(), :vtt | :srt) :: String.t()
-  def encode_part(%Header{} = header, _type) do
+  @spec encode_part(Header.t()) :: String.t()
+  def encode_part(%Header{} = header) do
     header.values
     |> Enum.map(fn {key, value} ->
       "#{key}:#{value}"
@@ -12,7 +12,8 @@ defmodule Vttyl.Encode do
     |> Enum.join(",")
   end
 
-  def encode_part(%Part{} = part, type) do
+  @spec encode_part(Part.t(), :vtt | :srt, map()) :: String.t()
+  def encode_part(%Part{} = part, type, opts \\ %{}) do
     ts =
       fmt_timestamp(part.start, type) <>
         " --> " <> fmt_timestamp(part.end, type) <> fmt_settings(part.settings)
@@ -24,7 +25,11 @@ defmodule Vttyl.Encode do
         part.text
       end
 
-    Enum.join([part.part, ts, text], "\n")
+    if opts.use_cue_identifiers do
+      Enum.join([part.part, ts, text], "\n")
+    else
+      Enum.join([ts, text], "\n")
+    end
   end
 
   @hour_ms 3_600_000
@@ -33,15 +38,10 @@ defmodule Vttyl.Encode do
     {hours, ms_wo_hrs} = mod(milliseconds, @hour_ms)
     {minutes, ms_wo_mins} = mod(ms_wo_hrs, @minute_ms)
 
-    # Lop off hours if there aren't any
     hr_and_min =
-      if hours <= 0 and type == :vtt do
-        prefix_fmt(minutes)
-      else
-        [hours, minutes]
-        |> Enum.map(&prefix_fmt/1)
-        |> Enum.join(":")
-      end
+      [hours, minutes]
+      |> Enum.map(&prefix_fmt/1)
+      |> Enum.join(":")
 
     hr_and_min <> ":" <> fmt_seconds(ms_wo_mins, type)
   end

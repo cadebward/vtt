@@ -7,12 +7,23 @@ defmodule Vttyl.Decode do
   @header_regex ~r/^(\S*?:\S*?)(,\S*?:\S*?)*$/
 
   def parse(enum_content) do
-    enum_content
-    |> Stream.map(fn line -> Regex.replace(~r/#.*/, line, "") end)
-    |> Stream.map(&String.trim/1)
-    |> Stream.reject(&(&1 in ["WEBVTT"]))
-    |> Stream.chunk_while(%Part{}, &parse_chunk/2, &parse_chunk_after/1)
-    |> Stream.filter(&full_chunk?/1)
+    parsed =
+      enum_content
+      |> Stream.map(fn line -> Regex.replace(~r/#.*/, line, "") end)
+      |> Stream.map(&String.trim/1)
+      |> Stream.reject(&(&1 in ["WEBVTT"]))
+      |> Stream.chunk_while(%Part{}, &parse_chunk/2, &parse_chunk_after/1)
+      |> Stream.filter(&full_chunk?/1)
+      |> Enum.to_list()
+
+    cues = Enum.filter(parsed, &match?(%Part{}, &1))
+    use_cue_identifiers? = Enum.all?(cues, &(&1.part > 0))
+
+    %Vttyl.Vtt{
+      use_cue_identifiers: use_cue_identifiers?,
+      headers: Enum.filter(parsed, &match?(%Header{}, &1)),
+      cues: cues
+    }
   end
 
   defp parse_chunk(line, acc) do
