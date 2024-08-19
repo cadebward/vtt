@@ -6,7 +6,7 @@ defmodule Vttyl.MixProject do
 
   def project do
     [
-      app: :vttyl,
+      app: :vtt,
       version: @version,
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
@@ -14,7 +14,7 @@ defmodule Vttyl.MixProject do
       package: package(),
       source_url: @repo_url,
       homepage_url: @repo_url,
-      name: "Vttyl",
+      name: "Vtt",
       description: "A dead simple vtt parser.",
       docs: [
         main: "readme",
@@ -33,7 +33,7 @@ defmodule Vttyl.MixProject do
 
   defp package do
     [
-      maintainers: ["Matt Lewis", "Ryan Johnson"],
+      maintainers: ["Cade Ward"],
       licenses: ["MIT"],
       links: %{
         "GitHub" => @repo_url,
